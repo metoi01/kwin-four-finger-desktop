@@ -4,7 +4,8 @@
 
     Four Finger Desktop — a declarative (QML) KWin script.
 
-    4-finger swipe down -> show the desktop (windows slide away)
+    4-finger swipe down -> if Window View is open, close it; otherwise show
+                           the desktop (windows slide away)
     4-finger swipe up   -> if the desktop is shown, bring the windows back;
                            otherwise open Window View (Present Windows).
     4-finger swipe left  -> switch to the next application window
@@ -47,6 +48,24 @@ Item {
         onFailed: windowView.call()
     }
 
+    // Is Window View open? A swipe down closes it instead of showing the desktop.
+    DBusCall {
+        id: queryActiveEffects
+        service: "org.kde.KWin"
+        path: "/Effects"
+        dbusInterface: "org.freedesktop.DBus.Properties"
+        method: "Get"
+        arguments: ["org.kde.kwin.Effects", "activeEffects"]
+        onFinished: (reply) => {
+            if (Array.from(reply[0] || []).indexOf("windowview") !== -1) {
+                windowView.call();
+            } else {
+                root.showDesktop(true);
+            }
+        }
+        onFailed: root.showDesktop(true)
+    }
+
     // Window View for the current desktop — same as the Ctrl+F9 shortcut.
     DBusCall {
         id: windowView
@@ -62,7 +81,7 @@ Item {
         setShowDesktop.call();
     }
 
-    function handleDown() { root.showDesktop(true); }
+    function handleDown() { queryActiveEffects.call(); }
     function handleUp() { queryShowingDesktop.call(); }
 
     // Windows that can be switched to: normal, shown in the switcher/taskbar,
