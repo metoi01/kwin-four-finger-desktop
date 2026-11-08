@@ -12,6 +12,7 @@ kwin() {
 
 echo "Unloading from KWin ..."
 kwin /Scripting org.kde.kwin.Scripting.unloadScript string:fourfingerdesktop
+rm -rf "${XDG_RUNTIME_DIR:-/tmp}"/fourfingerdesktop-session-*
 kwin /Effects org.kde.kwin.Effects.unloadEffect string:slidedowndesktop
 
 echo "Removing packages ..."
