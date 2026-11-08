@@ -13,17 +13,28 @@ import org.kde.kirigami as Kirigami
 QtObject {
     id: root
 
+    // Tuning: swipe progress (0..1, 1.0 = 200 touchpad units) of the first
+    // step, and the extra progress needed for each further step.
+    readonly property real firstStep: 0.08
+    readonly property real stepSize: 0.17
+
     // The SceneEffect that shows the overlay (set by main.qml).
     property var effect: null
 
     // Set to true to swap 4-finger left/right (left = previous window).
     readonly property bool invertHorizontal: false
 
-    // Progress thresholds for steps 1..4, and how far progress must fall below
-    // a threshold before the step is given up again.
-    readonly property var thresholds: [0.10, 0.40, 0.70, 0.97]
-    readonly property real hysteresis: 0.06
-    readonly property int maxSteps: 4
+    // Progress thresholds for steps 1..maxSteps (0.08, 0.25, ... 0.93), and how
+    // far progress must fall below a threshold before the step is given up.
+    readonly property int maxSteps: 6
+    readonly property var thresholds: {
+        const result = [];
+        for (let i = 0; i < maxSteps; i++) {
+            result.push(firstStep + i * stepSize);
+        }
+        return result;
+    }
+    readonly property real hysteresis: 0.04
 
     // --- state shared with Overlay.qml ---
     property var windows: []          // switchable windows, creation order
@@ -45,7 +56,7 @@ QtObject {
     property bool suppressed: false   // cancelled with Esc; swallow the rest
     property bool shown: false
     property bool endPending: false
-    property int rawLevel: 0          // 0..4, before the reach cap
+    property int rawLevel: 0          // 0..maxSteps, before the reach cap
     property int rawSign: 0
     property bool overshootDone: false
 

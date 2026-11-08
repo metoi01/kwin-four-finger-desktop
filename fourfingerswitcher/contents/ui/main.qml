@@ -6,7 +6,7 @@
 
     4-finger swipe left/right on the touchpad shows a strip of live window
     thumbnails; the target window is the large centre card. Swiping further
-    advances the selection (max 4 steps); lifting the fingers switches.
+    advances the selection (max 6 steps); lifting the fingers switches.
 
     This file is a deliberately thin, stable shell. KWin keeps ONE shared QML
     engine that caches components by URL, so after an upgrade a reload would

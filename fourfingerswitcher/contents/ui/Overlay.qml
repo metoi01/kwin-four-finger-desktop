@@ -116,13 +116,13 @@ Item {
         }
 
         Repeater {
-            model: 13
+            model: 17
 
             delegate: Item {
                 id: slot
 
                 required property int index
-                readonly property int k: index - 6
+                readonly property int k: index - 8
                 readonly property real d: k - root.stripPos
                 readonly property var win: root.switcher ? root.switcher.windowAt(k) : null
                 readonly property bool beyond: root.switcher !== null && Math.abs(k) > root.switcher.reach

@@ -22,7 +22,7 @@ order when you swipe up again — like a quick "peek at desktop" on your touchpa
 | 4 fingers **down** (Window View open) | Closes Window View; windows return to where they were |
 | 4 fingers **up** (desktop shown) | Windows slide back up into their old positions and stacking order |
 | 4 fingers **up** (normal) | Opens **Window View** (Present Windows) to see all your windows |
-| 4 fingers **left** / **right** | Shows a live preview strip of your windows; keep swiping to move up to 4 windows ahead (left = next, right = previous). **Lift your fingers to switch** to the selected window, or swipe back to the start to cancel |
+| 4 fingers **left** / **right** | Shows a live preview strip of your windows; keep swiping to move up to 6 windows ahead (left = next, right = previous). **Lift your fingers to switch** to the selected window, or swipe back to the start to cancel |
 
 - **Instant:** the action fires as soon as you start swiping — you don't have to
   swipe far or lift your fingers.
@@ -88,6 +88,8 @@ Removes all three packages and restores Plasma's defaults (Overview + Window Ape
 | What | Where | Default |
 | --- | --- | --- |
 | How far you have to swipe | `threshold` in [`fourfingerdesktop/contents/ui/main.qml`](fourfingerdesktop/contents/ui/main.qml) | `0.1` (≈ 20 touchpad units; `1.0` = 200) |
+| When the first window step happens | `firstStep` in [`Switcher.qml`](fourfingerswitcher/contents/ui/Switcher.qml) | `0.08` (≈ 16 touchpad units) |
+| How far each further step takes | `stepSize` in `Switcher.qml` | `0.17` (≈ 34 touchpad units; up to 6 steps) |
 | Swap left/right window switching | `invertHorizontal` in [`fourfingerswitcher/contents/ui/Switcher.qml`](fourfingerswitcher/contents/ui/Switcher.qml) | `false` (left = next window) |
 | Animation length | `animationTime(200)` in [`slidedowndesktop/contents/code/main.js`](slidedowndesktop/contents/code/main.js) | 200 ms |
 | What 4-finger up opens | `arguments: ["Expose"]` in `main.qml` | `Expose` (Window View, current desktop). `ExposeAll` = all desktops |
@@ -111,7 +113,7 @@ The project is three independent KWin packages:
    same animation backwards when the desktop is hidden again.
 3. **`fourfingerswitcher`** — a declarative (QML) KWin effect with a fullscreen overlay.
    Its left/right `SwipeGestureHandler`s drive the preview strip; the selection steps
-   (at 10 / 40 / 70 / 97 % of the swipe) follow your fingers and the window is switched
+   (first at 8 %, then every 17 % of the full swipe distance) follow your fingers and the window is switched
    when you lift them.
 
 Because it only uses KWin's public scripting/effect APIs, it touches no system files
@@ -139,7 +141,7 @@ KDE Plasma 6 (Wayland) için küçük bir KWin betiği ve efekti.
 | 4 parmak **aşağı** (Pencere Görünümü açıkken) | Pencere Görünümü kapanır, pencereler eski yerlerine döner |
 | 4 parmak **yukarı** (masaüstü açıkken) | Pencereler eski yerlerine, eski sıralarıyla geri döner |
 | 4 parmak **yukarı** (normalde) | **Pencere Görünümü** açılır, tüm pencereleri görürsün |
-| 4 parmak **sola** / **sağa** | Pencerelerin canlı önizleme şeridi açılır; kaydırmaya devam ettikçe en fazla 4 pencere ileri gidersin (sola = sonraki, sağa = önceki). **Parmaklarını kaldırınca** seçili pencereye geçilir; başa dönersen iptal olur |
+| 4 parmak **sola** / **sağa** | Pencerelerin canlı önizleme şeridi açılır; kaydırmaya devam ettikçe en fazla 6 pencere ileri gidersin (sola = sonraki, sağa = önceki). **Parmaklarını kaldırınca** seçili pencereye geçilir; başa dönersen iptal olur |
 
 - Hareketi algıladığı anda çalışır; uzun kaydırmana veya parmağını kaldırmana gerek yok.
 - Animasyon kısa (200 ms).
