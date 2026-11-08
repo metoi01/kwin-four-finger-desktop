@@ -229,12 +229,12 @@ Item {
 
                 // Seam marker after the last window of the taskbar order.
                 Rectangle {
-                    readonly property real right: root.xOf(slot.d) + root.fw * root.scaleOf(slot.d) / 2
-                    readonly property real left: root.xOf(slot.d + 1) - root.fw * root.scaleOf(slot.d + 1) / 2
+                    readonly property real edgeR: root.xOf(slot.d) + root.fw * root.scaleOf(slot.d) / 2
+                    readonly property real edgeL: root.xOf(slot.d + 1) - root.fw * root.scaleOf(slot.d + 1) / 2
                     visible: slot.isLast && Math.abs(slot.d + 0.5) < 2.5
                     width: 2
                     height: root.fh * root.nScale * 0.4
-                    x: root.width / 2 + (right + left) / 2 + root.kick - width / 2
+                    x: root.width / 2 + (edgeR + edgeL) / 2 + root.kick - width / 2
                     y: root.cy - height / 2
                     color: Qt.alpha(Kirigami.Theme.textColor, 0.25)
                     opacity: root.opacityOf(slot.d + 0.5)

@@ -10,7 +10,7 @@ import QtQuick
 import org.kde.kwin as KWinComponents
 import org.kde.kirigami as Kirigami
 
-Item {
+QtObject {
     id: root
 
     // The SceneEffect that shows the overlay (set by main.qml).
@@ -239,8 +239,8 @@ Item {
         }
     }
 
-    NumberAnimation {
-        id: fade
+    // Fade-out after release (a property, as animations cannot be children here).
+    property var fade: NumberAnimation {
         target: root
         property: "overlayOpacity"
         from: 1
@@ -249,7 +249,8 @@ Item {
         onFinished: root.complete()
     }
 
-    Connections {
+    // QtObject has no default property, so child objects are held in properties.
+    property var windowWatcher: Connections {
         target: KWinComponents.Workspace
         function onWindowRemoved(window) {
             if (!root.swiping && !root.shown) {
@@ -263,7 +264,7 @@ Item {
         }
     }
 
-    KWinComponents.SwipeGestureHandler {
+    property var leftHandler: KWinComponents.SwipeGestureHandler {
         direction: KWinComponents.SwipeGestureHandler.Direction.Left
         fingerCount: 4
         deviceType: KWinComponents.SwipeGestureHandler.Device.Touchpad
@@ -272,7 +273,7 @@ Item {
         onCancelled: root.swipeEnded()
     }
 
-    KWinComponents.SwipeGestureHandler {
+    property var rightHandler: KWinComponents.SwipeGestureHandler {
         direction: KWinComponents.SwipeGestureHandler.Direction.Right
         fingerCount: 4
         deviceType: KWinComponents.SwipeGestureHandler.Device.Touchpad
