@@ -14,14 +14,16 @@ echo "Unloading from KWin ..."
 kwin /Scripting org.kde.kwin.Scripting.unloadScript string:fourfingerdesktop
 rm -rf "${XDG_RUNTIME_DIR:-/tmp}"/fourfingerdesktop-session-*
 kwin /Effects org.kde.kwin.Effects.unloadEffect string:slidedowndesktop
+kwin /Effects org.kde.kwin.Effects.unloadEffect string:fourfingerswitcher
 
 echo "Removing packages ..."
 kpackagetool6 --type KWin/Script --remove fourfingerdesktop >/dev/null 2>&1 || true
 kpackagetool6 --type KWin/Effect --remove slidedowndesktop >/dev/null 2>&1 || true
+kpackagetool6 --type KWin/Effect --remove fourfingerswitcher >/dev/null 2>&1 || true
 
 echo "Restoring default KWin settings ..."
 # Deleting the keys makes KWin fall back to each plugin's default.
-for key in fourfingerdesktopEnabled slidedowndesktopEnabled overviewEnabled \
+for key in fourfingerdesktopEnabled fourfingerswitcherEnabled slidedowndesktopEnabled overviewEnabled \
            windowapertureEnabled eyeonscreenEnabled windowviewEnabled; do
     kwriteconfig6 --file kwinrc --group Plugins --key "$key" --delete
 done

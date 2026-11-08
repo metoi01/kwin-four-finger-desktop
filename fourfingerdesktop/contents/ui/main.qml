@@ -8,8 +8,8 @@
                            the desktop (windows slide away)
     4-finger swipe up   -> if the desktop is shown, bring the windows back;
                            otherwise open Window View (Present Windows).
-    4-finger swipe left  -> switch to the next application window
-    4-finger swipe right -> switch to the previous application window
+    4-finger swipe left/right is handled by the separate "Four Finger
+    Switcher" effect (fourfingerswitcher).
 
     KWin's built-in Overview effect hard-codes 4-finger up/down swipes and
     KWin fires *every* gesture that matches a swipe, so the Overview effect
@@ -84,50 +84,6 @@ Item {
     function handleDown() { queryActiveEffects.call(); }
     function handleUp() { queryShowingDesktop.call(); }
 
-    // Windows that can be switched to: normal, shown in the switcher/taskbar,
-    // on the current desktop and activity. Minimized windows are included.
-    function switchableWindows() {
-        const result = [];
-        for (const w of Workspace.windows) {
-            if (!w.normalWindow || w.skipSwitcher || w.skipTaskbar) {
-                continue;
-            }
-            const desktops = Array.from(w.desktops);
-            if (!w.onAllDesktops && !desktops.includes(Workspace.currentDesktop)) {
-                continue;
-            }
-            const activities = Array.from(w.activities);
-            if (activities.length !== 0 && !activities.includes(Workspace.currentActivity)) {
-                continue;
-            }
-            result.push(w);
-        }
-        return result;
-    }
-
-    // step = +1: next window, -1: previous window (wraps around).
-    function switchWindow(step) {
-        const list = switchableWindows();
-        const index = list.indexOf(Workspace.activeWindow);
-        if (index < 0) {
-            if (list.length === 0) {
-                return;
-            }
-        } else if (list.length < 2) {
-            return;
-        }
-        const target = index < 0
-            ? (step > 0 ? list[0] : list[list.length - 1])
-            : list[(index + step + list.length) % list.length];
-        if (target.minimized) {
-            target.minimized = false;
-        }
-        Workspace.activeWindow = target;
-    }
-
-    function handleLeft() { root.switchWindow(invertHorizontal ? -1 : 1); }
-    function handleRight() { root.switchWindow(invertHorizontal ? 1 : -1); }
-
     /*
         Activation threshold (0..1) — how far you have to swipe.
 
@@ -137,9 +93,6 @@ Item {
         the gesture by accident; lower it to make it even more sensitive.
     */
     readonly property real threshold: 0.1
-
-    // Set to true to swap 4-finger left/right (left = previous window).
-    readonly property bool invertHorizontal: false
 
     // True once the current swipe has fired; prevents firing twice
     // (e.g. down then back up in a single swipe).
@@ -151,12 +104,7 @@ Item {
         endPending = false;
         if (!fired && progress >= threshold) {
             fired = true;
-            switch (dir) {
-            case "down": handleDown(); break;
-            case "up": handleUp(); break;
-            case "left": handleLeft(); break;
-            case "right": handleRight(); break;
-            }
+            dir === "down" ? handleDown() : handleUp();
         }
     }
 
@@ -190,24 +138,6 @@ Item {
         fingerCount: 4
         deviceType: SwipeGestureHandler.Device.Touchpad
         onProgressChanged: root.track("up", progress)
-        onActivated: root.swipeEnded()
-        onCancelled: root.swipeEnded()
-    }
-
-    SwipeGestureHandler {
-        direction: SwipeGestureHandler.Direction.Left
-        fingerCount: 4
-        deviceType: SwipeGestureHandler.Device.Touchpad
-        onProgressChanged: root.track("left", progress)
-        onActivated: root.swipeEnded()
-        onCancelled: root.swipeEnded()
-    }
-
-    SwipeGestureHandler {
-        direction: SwipeGestureHandler.Direction.Right
-        fingerCount: 4
-        deviceType: SwipeGestureHandler.Device.Touchpad
-        onProgressChanged: root.track("right", progress)
         onActivated: root.swipeEnded()
         onCancelled: root.swipeEnded()
     }

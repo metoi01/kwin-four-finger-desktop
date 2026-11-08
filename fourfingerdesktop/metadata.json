@@ -13,7 +13,7 @@
         "License": "GPL-2.0-or-later",
         "Name": "Four Finger Desktop",
         "Name[tr]": "Dört Parmak Masaüstü",
-        "Version": "1.2.0",
+        "Version": "1.3.0",
         "Website": "https://github.com/metoi01/kwin-four-finger-desktop"
     },
     "X-Plasma-API": "declarativescript"
