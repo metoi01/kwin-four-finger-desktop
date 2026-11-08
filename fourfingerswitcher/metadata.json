@@ -1,0 +1,22 @@
+{
+    "KPackageStructure": "KWin/Effect",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Mert Okhan"
+            }
+        ],
+        "Category": "Window Management",
+        "Description": "4-finger swipe left/right shows a live preview strip of your windows; lift your fingers to switch to the selected window.",
+        "Description[tr]": "4 parmak sola/sağa kaydırınca pencerelerin canlı önizleme şeridi görünür; parmaklarını kaldırınca seçili pencereye geçilir.",
+        "EnabledByDefault": false,
+        "Id": "fourfingerswitcher",
+        "License": "GPL-2.0-or-later",
+        "Name": "Four Finger Switcher",
+        "Name[tr]": "Dört Parmak Pencere Geçişi",
+        "Version": "1.3.0",
+        "Website": "https://github.com/metoi01/kwin-four-finger-desktop"
+    },
+    "X-KDE-Ordering": 60,
+    "X-Plasma-API": "declarativescript"
+}

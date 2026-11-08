@@ -22,10 +22,11 @@ order when you swipe up again — like a quick "peek at desktop" on your touchpa
 | 4 fingers **down** (Window View open) | Closes Window View; windows return to where they were |
 | 4 fingers **up** (desktop shown) | Windows slide back up into their old positions and stacking order |
 | 4 fingers **up** (normal) | Opens **Window View** (Present Windows) to see all your windows |
-| 4 fingers **left** / **right** | Switches to the next / previous application window (wraps around) |
+| 4 fingers **left** / **right** | Shows a live preview strip of your windows; keep swiping to move up to 6 windows ahead (left = next, right = previous). **Lift your fingers to switch** to the selected window, or swipe back to the start to cancel |
 
-- **Instant:** the action fires as soon as you start swiping — you don't have to
-  swipe far or lift your fingers.
+- **Instant** (up/down): the action fires as soon as you start swiping — you don't
+  have to swipe far or lift your fingers. Left/right is the exception: it shows a live
+  preview and switches when you lift your fingers.
 - **Fast:** a short 200 ms slide animation (respects Plasma's global animation speed).
 - Works with <kbd>Meta</kbd>+<kbd>D</kbd> too: show the desktop with the keyboard,
   bring the windows back with a swipe (or vice versa).
@@ -73,6 +74,7 @@ After installing you will find both parts in **System Settings**:
 
 - *Window Management → KWin Scripts →* **Four Finger Desktop**
 - *Window Management → Desktop Effects → Show Desktop Animation →* **Slide Down Desktop**
+- *Window Management → Desktop Effects → Window Management →* **Four Finger Switcher**
 
 ## Uninstall
 
@@ -80,14 +82,16 @@ After installing you will find both parts in **System Settings**:
 ./uninstall.sh
 ```
 
-Removes both packages and restores Plasma's defaults (Overview + Window Aperture).
+Removes all three packages and restores Plasma's defaults (Overview + Window Aperture).
 
 ## Customize
 
 | What | Where | Default |
 | --- | --- | --- |
 | How far you have to swipe | `threshold` in [`fourfingerdesktop/contents/ui/main.qml`](fourfingerdesktop/contents/ui/main.qml) | `0.1` (≈ 20 touchpad units; `1.0` = 200) |
-| Swap left/right window switching | `invertHorizontal` in `main.qml` | `false` (left = next window) |
+| When the first window step happens | `firstStep` in [`Switcher.qml`](fourfingerswitcher/contents/ui/Switcher.qml) | `0.08` (≈ 16 touchpad units) |
+| How far each further step takes | `stepSize` in `Switcher.qml` | `0.17` (≈ 34 touchpad units; up to 6 steps) |
+| Swap left/right window switching | `invertHorizontal` in [`fourfingerswitcher/contents/ui/Switcher.qml`](fourfingerswitcher/contents/ui/Switcher.qml) | `false` (left = next window) |
 | Animation length | `animationTime(200)` in [`slidedowndesktop/contents/code/main.js`](slidedowndesktop/contents/code/main.js) | 200 ms |
 | What 4-finger up opens | `arguments: ["Expose"]` in `main.qml` | `Expose` (Window View, current desktop). `ExposeAll` = all desktops |
 
@@ -95,7 +99,7 @@ Run `./install.sh` again after editing to apply your changes.
 
 ## How it works
 
-The project is two independent KWin packages:
+The project is three independent KWin packages:
 
 1. **`fourfingerdesktop`** — a declarative (QML) KWin script. It registers two
    `SwipeGestureHandler`s (4 fingers, up and down) and talks to KWin over D-Bus:
@@ -108,6 +112,10 @@ The project is two independent KWin packages:
    category (adapted from KWin's *Window Aperture*). When KWin enters "show desktop"
    it translates every hidden window down past the bottom of its screen, and plays the
    same animation backwards when the desktop is hidden again.
+3. **`fourfingerswitcher`** — a declarative (QML) KWin effect with a fullscreen overlay.
+   Its left/right `SwipeGestureHandler`s drive the preview strip; the selection steps
+   (first at 8 %, then every 17 % of the full swipe distance) follow your fingers and the window is switched
+   when you lift them.
 
 Because it only uses KWin's public scripting/effect APIs, it touches no system files
 and survives system updates (including immutable distros like Fedora Kinoite / Bazzite).
@@ -134,9 +142,9 @@ KDE Plasma 6 (Wayland) için küçük bir KWin betiği ve efekti.
 | 4 parmak **aşağı** (Pencere Görünümü açıkken) | Pencere Görünümü kapanır, pencereler eski yerlerine döner |
 | 4 parmak **yukarı** (masaüstü açıkken) | Pencereler eski yerlerine, eski sıralarıyla geri döner |
 | 4 parmak **yukarı** (normalde) | **Pencere Görünümü** açılır, tüm pencereleri görürsün |
-| 4 parmak **sola** / **sağa** | Bir sonraki / önceki uygulama penceresine geçer |
+| 4 parmak **sola** / **sağa** | Pencerelerin canlı önizleme şeridi açılır; kaydırmaya devam ettikçe en fazla 6 pencere ileri gidersin (sola = sonraki, sağa = önceki). **Parmaklarını kaldırınca** seçili pencereye geçilir; başa dönersen iptal olur |
 
-- Hareketi algıladığı anda çalışır; uzun kaydırmana veya parmağını kaldırmana gerek yok.
+- Yukarı/aşağı hareketi algıladığı anda çalışır; uzun kaydırmana veya parmağını kaldırmana gerek yok. Sola/sağa ise canlı önizleme gösterir ve parmaklarını kaldırınca geçiş yapar.
 - Animasyon kısa (200 ms).
 - KWin 4 parmak sola/sağa hareketini sanal masaüstü geçişi için de kendi koduna sabit yazmıştır; bir satırda birden fazla sanal masaüstün varsa ikisi birden olur, bu yüzden tek masaüstüyle en iyi çalışır.
 
