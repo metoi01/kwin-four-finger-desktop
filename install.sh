@@ -64,7 +64,17 @@ for effect in overview windowaperture eyeonscreen slidedowndesktop; do
 done
 kwin /Effects org.kde.kwin.Effects.loadEffect string:windowview
 kwin /Effects org.kde.kwin.Effects.loadEffect string:slidedowndesktop
+# KWin caches QML components by file path, so reloading the installed main.qml
+# would keep running the old code until the next login. Load a copy from a
+# fresh path instead (same plugin name, so System Settings and uninstall still
+# work). The copy only lives for this session; the next login loads the
+# installed package normally.
 kwin /Scripting org.kde.kwin.Scripting.unloadScript string:fourfingerdesktop
+rm -rf "${XDG_RUNTIME_DIR:-/tmp}"/fourfingerdesktop-session-*
+session_dir="${XDG_RUNTIME_DIR:-/tmp}/fourfingerdesktop-session-$(date +%s%N)"
+mkdir -p "$session_dir"
+cp "${XDG_DATA_HOME:-$HOME/.local/share}/kwin/scripts/fourfingerdesktop/contents/ui/main.qml" "$session_dir/main.qml"
+kwin /Scripting org.kde.kwin.Scripting.loadDeclarativeScript "string:$session_dir/main.qml" string:fourfingerdesktop
 kwin /Scripting org.kde.kwin.Scripting.start
 
 echo

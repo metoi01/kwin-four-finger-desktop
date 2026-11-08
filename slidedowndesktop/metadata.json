@@ -18,7 +18,7 @@
         "License": "GPL-2.0-or-later",
         "Name": "Slide Down Desktop",
         "Name[tr]": "Aşağı Kaydırarak Masaüstü",
-        "Version": "1.1.0",
+        "Version": "1.1.1",
         "Website": "https://github.com/metoi01/kwin-four-finger-desktop"
     },
     "X-KDE-Ordering": 50,

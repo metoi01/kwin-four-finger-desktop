@@ -65,6 +65,8 @@ cd kwin-four-finger-desktop
 
 No root needed — everything goes into `~/.local/share/kwin` and `~/.config/kwinrc`
 (a backup of `kwinrc` is made first). It takes effect immediately, no logout required.
+Re-running `./install.sh` (e.g. after editing a setting or `git pull`) applies the
+changes immediately too, again without logging out.
 
 After installing you will find both parts in **System Settings**:
 
