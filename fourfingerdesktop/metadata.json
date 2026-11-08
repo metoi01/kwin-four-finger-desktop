@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "KWin/Script",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Mert Okhan"
+            }
+        ],
+        "Description": "4-finger swipe down shows the desktop; 4-finger swipe up brings the windows back (or opens Window View).",
+        "Description[tr]": "4 parmak aşağı: masaüstünü göster. 4 parmak yukarı: pencereleri geri getir (masaüstü açık değilse Pencere Görünümü'nü aç).",
+        "EnabledByDefault": false,
+        "Id": "fourfingerdesktop",
+        "License": "GPL-2.0-or-later",
+        "Name": "Four Finger Desktop",
+        "Name[tr]": "Dört Parmak Masaüstü",
+        "Version": "1.0.0",
+        "Website": "https://github.com/metoi01/kwin-four-finger-desktop"
+    },
+    "X-Plasma-API": "declarativescript"
+}

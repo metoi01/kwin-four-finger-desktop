@@ -1,0 +1,27 @@
+{
+    "KPackageStructure": "KWin/Effect",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Mert Okhan"
+            },
+            {
+                "Email": "thomas.luebking@gmail.com",
+                "Name": "Thomas Lübking"
+            }
+        ],
+        "Category": "Show Desktop Animation",
+        "Description": "Slide windows down off the screen when showing the desktop",
+        "Description[tr]": "Masaüstünü gösterirken pencereleri ekranın altına kaydırır",
+        "EnabledByDefault": false,
+        "Id": "slidedowndesktop",
+        "License": "GPL-2.0-or-later",
+        "Name": "Slide Down Desktop",
+        "Name[tr]": "Aşağı Kaydırarak Masaüstü",
+        "Version": "1.0.0",
+        "Website": "https://github.com/metoi01/kwin-four-finger-desktop"
+    },
+    "X-KDE-Ordering": 50,
+    "X-KWin-Exclusive-Category": "show-desktop",
+    "X-Plasma-API": "javascript"
+}
