@@ -24,8 +24,9 @@ order when you swipe up again — like a quick "peek at desktop" on your touchpa
 | 4 fingers **up** (normal) | Opens **Window View** (Present Windows) to see all your windows |
 | 4 fingers **left** / **right** | Shows a live preview strip of your windows; keep swiping to move up to 6 windows ahead (left = next, right = previous). **Lift your fingers to switch** to the selected window, or swipe back to the start to cancel |
 
-- **Instant:** the action fires as soon as you start swiping — you don't have to
-  swipe far or lift your fingers.
+- **Instant** (up/down): the action fires as soon as you start swiping — you don't
+  have to swipe far or lift your fingers. Left/right is the exception: it shows a live
+  preview and switches when you lift your fingers.
 - **Fast:** a short 200 ms slide animation (respects Plasma's global animation speed).
 - Works with <kbd>Meta</kbd>+<kbd>D</kbd> too: show the desktop with the keyboard,
   bring the windows back with a swipe (or vice versa).
@@ -143,7 +144,7 @@ KDE Plasma 6 (Wayland) için küçük bir KWin betiği ve efekti.
 | 4 parmak **yukarı** (normalde) | **Pencere Görünümü** açılır, tüm pencereleri görürsün |
 | 4 parmak **sola** / **sağa** | Pencerelerin canlı önizleme şeridi açılır; kaydırmaya devam ettikçe en fazla 6 pencere ileri gidersin (sola = sonraki, sağa = önceki). **Parmaklarını kaldırınca** seçili pencereye geçilir; başa dönersen iptal olur |
 
-- Hareketi algıladığı anda çalışır; uzun kaydırmana veya parmağını kaldırmana gerek yok.
+- Yukarı/aşağı hareketi algıladığı anda çalışır; uzun kaydırmana veya parmağını kaldırmana gerek yok. Sola/sağa ise canlı önizleme gösterir ve parmaklarını kaldırınca geçiş yapar.
 - Animasyon kısa (200 ms).
 - KWin 4 parmak sola/sağa hareketini sanal masaüstü geçişi için de kendi koduna sabit yazmıştır; bir satırda birden fazla sanal masaüstün varsa ikisi birden olur, bu yüzden tek masaüstüyle en iyi çalışır.
 

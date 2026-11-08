@@ -59,6 +59,7 @@ QtObject {
     property int rawLevel: 0          // 0..maxSteps, before the reach cap
     property int rawSign: 0
     property bool overshootDone: false
+    property bool committing: false   // a switch was just made; hide caption/dots
 
     // Scales a duration by Plasma's animation speed. Kirigami's longDuration is
     // 200 ms at normal speed and 0 when animations are off ("Instant").
@@ -87,8 +88,8 @@ QtObject {
         return result;
     }
 
-    function refresh() {
-        windows = switchableWindows();
+    function refresh(exclude) {
+        windows = switchableWindows().filter(w => w !== exclude);
         originIndex = origin ? windows.indexOf(origin) : -1;
         reach = Math.min(maxSteps, originIndex >= 0 ? windows.length - 1 : windows.length);
     }
@@ -110,7 +111,7 @@ QtObject {
         return k > 0 ? windows[(k - 1) % n] : windows[((k % n) + n) % n];
     }
 
-    // Step level 0..4 for a progress value, with hysteresis relative to the
+    // Step level 0..maxSteps for a progress value, with hysteresis relative to the
     // level we are currently at.
     function levelFor(progress, current) {
         let level = current;
@@ -132,10 +133,16 @@ QtObject {
         origin = KWinComponents.Workspace.activeWindow;
         refresh();
         blocked = windows.length === 0 || (originIndex >= 0 && windows.length < 2);
+        committing = false;
         if (shown) {
-            step = 0;
-            lean = 0;
-            overlayOpacity = 1;
+            // A swipe started while the previous overlay was still fading out.
+            if (blocked) {
+                complete();
+            } else {
+                step = 0;
+                lean = 0;
+                overlayOpacity = 1;
+            }
         }
     }
 
@@ -160,7 +167,7 @@ QtObject {
             overshootSign = rawSign;
             overshootTick++;
         }
-        lean = (level < reach && rawLevel === level)
+        lean = (ms(200) > 0 && level < reach && rawLevel === level)
             ? rawSign * Math.max(0, Math.min(0.12, progress - (thresholds[level] - 0.12)))
             : 0;
         step = rawSign * level;
@@ -172,11 +179,22 @@ QtObject {
     function show() {
         const output = origin && origin.output ? origin.output : KWinComponents.Workspace.activeScreen;
         screenName = output ? output.name : "";
-        shown = true;
         overlayOpacity = 1;
         if (effect) {
             effect.visible = true;
+            // KWin silently refuses to start while another fullscreen effect
+            // (e.g. Window View) is active; then there is no active view. Keep
+            // QML and KWin in sync and swallow the rest of this swipe, so no
+            // window is switched that the user never saw.
+            if (effect.activeView === null) {
+                effect.visible = false;
+                step = 0;
+                lean = 0;
+                suppressed = true;
+                return;
+            }
         }
+        shown = true;
     }
 
     function hide() {
@@ -187,7 +205,7 @@ QtObject {
         }
         if (ms(120) === 0) {
             complete();
-        } else {
+        } else if (!fade.running) {
             fade.restart();
         }
     }
@@ -197,6 +215,7 @@ QtObject {
             effect.visible = false;
         }
         shown = false;
+        committing = false;
         step = 0;
         lean = 0;
         overlayOpacity = 1;
@@ -222,16 +241,58 @@ QtObject {
         rawLevel = 0;
         rawSign = 0;
         overshootDone = false;
-        if (swallowed) {
-            return;
-        }
         if (target) {
             if (target.minimized) {
                 target.minimized = false;
             }
             KWinComponents.Workspace.activeWindow = target;
+            committing = true;
         }
-        hide();
+        // Whatever happened, once the fingers are up the overlay must go away.
+        if (shown) {
+            hide();
+        }
+    }
+
+    // A window closed mid-gesture: keep the focused card stable. If the focused
+    // window itself closed, the next card in the swipe direction takes focus.
+    function windowClosed(window) {
+        const old = windows;
+        const dir = step < 0 ? -1 : 1;
+        let focused = windowAt(step);
+        if (focused === window) {
+            focused = null;
+            const index = old.indexOf(window);
+            for (let i = 1; i < old.length; i++) {
+                const candidate = old[(((index + dir * i) % old.length) + old.length) % old.length];
+                if (candidate !== window) {
+                    focused = candidate;
+                    break;
+                }
+            }
+        }
+        if (origin === window) {
+            origin = null;
+        }
+        refresh(window);
+        const n = windows.length;
+        if (n === 0 || focused === null) {
+            step = 0;
+            rawLevel = 0;
+            return;
+        }
+        const index = windows.indexOf(focused);
+        let s;
+        if (originIndex >= 0) {
+            s = (((index - originIndex) % n) + n) % n;
+            if (dir < 0 && s > 0) {
+                s -= n;
+            }
+        } else {
+            s = dir > 0 ? index + 1 : index - n;
+        }
+        step = Math.max(-reach, Math.min(reach, s));
+        rawLevel = Math.abs(step);
     }
 
     function swipeEnded() {
@@ -267,11 +328,7 @@ QtObject {
             if (!root.swiping && !root.shown) {
                 return;
             }
-            if (root.origin === window) {
-                root.origin = null;
-            }
-            root.refresh();
-            root.step = Math.max(-root.reach, Math.min(root.reach, root.step));
+            root.windowClosed(window);
         }
     }
 
@@ -292,6 +349,4 @@ QtObject {
         onActivated: root.swipeEnded()
         onCancelled: root.swipeEnded()
     }
-
-    Component.onCompleted: console.warn("FFSW switcher loaded, longDuration=" + Kirigami.Units.longDuration)
 }

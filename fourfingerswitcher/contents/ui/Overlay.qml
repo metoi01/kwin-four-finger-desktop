@@ -53,6 +53,32 @@ Item {
         return typeof i18nd === "function" ? i18nd("kwin", text) : text;
     }
 
+    // "com.anthropic.Claude" -> "Claude"; empty if it only repeats the caption.
+    function appName(win) {
+        if (!win) {
+            return "";
+        }
+        const resourceClass = String(win.resourceClass);
+        const part = resourceClass.substring(resourceClass.lastIndexOf(".") + 1);
+        if (part === "") {
+            return "";
+        }
+        const name = part.charAt(0).toUpperCase() + part.slice(1);
+        return name.toLowerCase() === String(win.caption).toLowerCase() ? "" : name;
+    }
+
+    function detailLine(win) {
+        const parts = [];
+        const name = appName(win);
+        if (name !== "") {
+            parts.push(name);
+        }
+        if (win && win.minimized) {
+            parts.push(tr("Minimized"));
+        }
+        return parts.join(" · ");
+    }
+
     function lin(c) {
         return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     }
@@ -245,7 +271,7 @@ Item {
         // Caption pill for the window that will be activated.
         Rectangle {
             id: pill
-            visible: root.focusWin !== null
+            visible: root.focusWin !== null && !(root.switcher && root.switcher.committing)
             width: Math.min(root.fw, pillRow.implicitWidth + 40)
             height: pillRow.implicitHeight + 24
             x: root.width / 2 - width / 2
@@ -285,9 +311,8 @@ Item {
 
                     Text {
                         Layout.fillWidth: true
-                        text: root.focusWin
-                            ? root.focusWin.resourceClass + (root.focusWin.minimized ? " · " + root.tr("Minimized") : "")
-                            : ""
+                        text: root.detailLine(root.focusWin)
+                        visible: text !== ""
                         elide: Text.ElideRight
                         color: Qt.alpha(Kirigami.Theme.textColor, root.lowContrast ? 1.0 : 0.72)
                         font.family: Kirigami.Theme.defaultFont.family
@@ -301,7 +326,7 @@ Item {
         // One notch per reachable step; the current step is the long one.
         RowLayout {
             id: notches
-            visible: root.switcher !== null && root.switcher.reach > 0
+            visible: root.switcher !== null && root.switcher.reach > 0 && !root.switcher.committing
             spacing: 8
             x: root.width / 2 - width / 2
             y: pill.y + pill.height + 14

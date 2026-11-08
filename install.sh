@@ -2,8 +2,9 @@
 # SPDX-FileCopyrightText: 2026 Mert Okhan
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
-# Installs the "Four Finger Desktop" KWin script and the "Slide Down Desktop"
-# effect for the current user, enables them, and reloads KWin. No root needed.
+# Installs the "Four Finger Desktop" KWin script, the "Slide Down Desktop"
+# effect and the "Four Finger Switcher" effect (left/right window preview
+# switching) for the current user, enables them, and reloads KWin. No root needed.
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -83,5 +84,6 @@ kwin /Scripting org.kde.kwin.Scripting.loadDeclarativeScript "string:$session_di
 kwin /Scripting org.kde.kwin.Scripting.start
 
 echo
-echo "Done! Swipe down with 4 fingers to show the desktop, swipe up to bring the windows back."
+echo "Done! Swipe down with 4 fingers to show the desktop, swipe up to bring the windows back,"
+echo "swipe left/right to preview and switch windows (lift your fingers to switch)."
 echo "To undo everything, run: $DIR/uninstall.sh"
