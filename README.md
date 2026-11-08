@@ -19,6 +19,7 @@ order when you swipe up again — like a quick "peek at desktop" on your touchpa
 | Gesture | Result |
 | --- | --- |
 | 4 fingers **down** | All windows slide down off the screen → the desktop is shown |
+| 4 fingers **down** (Window View open) | Closes Window View; windows return to where they were |
 | 4 fingers **up** (desktop shown) | Windows slide back up into their old positions and stacking order |
 | 4 fingers **up** (normal) | Opens **Window View** (Present Windows) to see all your windows |
 | 4 fingers **left** / **right** | Switches to the next / previous application window (wraps around) |
@@ -130,6 +131,7 @@ KDE Plasma 6 (Wayland) için küçük bir KWin betiği ve efekti.
 | Hareket | Sonuç |
 | --- | --- |
 | 4 parmak **aşağı** | Tüm pencereler ekranın altına kayar, masaüstü görünür |
+| 4 parmak **aşağı** (Pencere Görünümü açıkken) | Pencere Görünümü kapanır, pencereler eski yerlerine döner |
 | 4 parmak **yukarı** (masaüstü açıkken) | Pencereler eski yerlerine, eski sıralarıyla geri döner |
 | 4 parmak **yukarı** (normalde) | **Pencere Görünümü** açılır, tüm pencereleri görürsün |
 | 4 parmak **sola** / **sağa** | Bir sonraki / önceki uygulama penceresine geçer |
