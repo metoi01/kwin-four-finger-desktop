@@ -257,6 +257,14 @@ QtObject {
     // A window closed mid-gesture: keep the focused card stable. If the focused
     // window itself closed, the next card in the swipe direction takes focus.
     function windowClosed(window) {
+        if (step === 0) {
+            // Nothing selected yet: never turn a closing window into a switch.
+            if (origin === window) {
+                origin = null;
+            }
+            refresh(window);
+            return;
+        }
         const old = windows;
         const dir = step < 0 ? -1 : 1;
         let focused = windowAt(step);
